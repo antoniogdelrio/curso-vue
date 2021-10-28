@@ -1,0 +1,49 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+
+<div id="app">
+    {{ nome }} {{ sobrenome }} {{ 1 + 1 }}
+</div>
+<script>
+    function meuVue(params) {
+        this.$el = document.querySelector(params.el);
+        this.$data = params.data;
+
+        for(let atr in this.$data){
+            //Funções get e set são chamadas automaticamente quando quero acessar (get) ou alterar (set) valor
+
+            //Object.defineProperty = cria props em um objeto (no caso abaixo, na própria instancia meuVue), criando funções proxy para get e set dos dados
+            Object.defineProperty(this, atr, {
+                get: () => {
+                    return this.$data[atr];
+                },
+                set: (value) => {
+                    /*Quando roda a função set, são executadas outras rotinas antes e depois da mudança em si,
+                    permitindo ao Vue notificar outras funções (ex: depois de setar, ele executa os watchs) */
+                    this.$data[atr] = value;
+
+                    console.log('chamado após o set sempre')
+                }
+            })
+        }
+
+        //interpolação das chaves
+        const regex = /\{\{([\s\w+]*)\}\}/g;
+
+        //Captura os valores entre {} e faz a subsituição por possiveis valores na instancia, ou então avalia como expressão de js usando eval()
+        this.$el.innerHTML = this.$el.innerHTML.replace(regex, (match, $1) => {
+            const value = this[$1.trim()]; //retira espaços em branco;
+            return value ? value : eval($1);
+        });
+    }
+
+    const vm = new meuVue({
+        el: "#app",
+        data: {
+            nome: "Maria",
+            sobrenome: "Silva"
+        }
+    })
+</script>

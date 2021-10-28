@@ -1,0 +1,27 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <input type="text" v-on:input="alterarTitulo">
+        <p>{{titulo}}</p>
+    </div>
+</body>
+
+<script>
+    const app = new Vue({
+        el: "#app",
+        data: {
+            titulo: "Curso de Vue.js"
+        },
+        methods: {
+            alterarTitulo: function(event){
+                console.log(event);
+
+                //Vue injeta as props no "this"
+                this.titulo = event.target.value;
+            }
+        }
+    })
+</script>

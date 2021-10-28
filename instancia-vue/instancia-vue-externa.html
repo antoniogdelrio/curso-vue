@@ -1,0 +1,25 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app1">
+        {{ titulo1 }} 
+    </div>
+
+</body>
+
+<script>
+    const vm1 = new Vue({
+        el: "#app1",
+        data: {
+            titulo1: 'Teste 1'
+        }
+    })
+    
+    //vm1 é acessivel externamente
+    setTimeout(() => {
+       vm1.titulo1 = "Alterado pelo timer" 
+    }, 4000);
+</script>

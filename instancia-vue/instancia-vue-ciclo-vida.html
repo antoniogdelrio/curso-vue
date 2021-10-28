@@ -1,0 +1,63 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <h1>{{ titulo }}</h1>
+        <button @click="titulo += '#'">Alterar Título</button>
+        <button @click="$destroy()">Destruir</button>
+    </div>
+</body>
+
+<script>
+    const vm = new Vue({
+        el: "#app",
+        data: {
+            titulo: "Ciclo de Vida"
+        },
+        beforeCreate(){
+            console.log('Antes de criar')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        },
+        created(){
+            //Instancia Vue e Dados vinculados no JS
+            console.log('Criado')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        },
+        beforeMount(){
+            console.log('Antes de montar')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        },
+        mounted(){
+            //DOM montada com dados do Vue injetados
+            console.log('DOM montada')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        },
+        beforeUpdate(){
+            console.log('Antes de Atualizar')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        },
+        updated(){
+            console.log('Atualizado')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        },
+        beforeDestroy(){
+            console.log('Antes de destruir')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        },
+        destroyed(){
+            console.log('Destruído')
+            console.log(this.titulo)
+            console.log(document.querySelector('h1'))
+        }
+    })
+</script>

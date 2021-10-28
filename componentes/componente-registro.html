@@ -1,0 +1,49 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app1">
+        <Contador1></Contador1>
+        <Contador1></Contador1>
+        <Contador1></Contador1>
+    </div>
+    <hr>
+    <div id="app2">
+        <app-contador></app-contador>
+        <app-contador></app-contador>
+        <app-contador></app-contador>
+    </div>
+</body>
+
+<script>
+    const contador = {
+        template: `
+            <div>
+                <span>{{ contador }}</span>
+                <button @click="contador++">+</button>
+                <button @click="contador--">-</button>
+            </div>
+        `,
+        data: function(){
+            return {
+                contador: 0
+            }
+        }
+    }
+
+    new Vue({
+        el: "#app1",
+        //Registro Local
+        components: {
+            contador1: contador //Visível apenas para essa instância Vue
+        }
+    })
+    new Vue({
+        el: "#app2",
+        components: {
+            'app-contador': contador
+        }
+    })
+</script>

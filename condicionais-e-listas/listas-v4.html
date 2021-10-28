@@ -1,0 +1,48 @@
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <meta charset="UTF-8">
+</head>
+
+<div id="app">
+    <ul>
+        <!-- (item, indice), assim consigo acessar tanto o item em si como seu indice na lista -->
+       <li v-for="(cor, i) in cores">{{ cor }} - {{ i }}</li> 
+    </ul>
+    <hr>
+    <template v-for="(cor, i) in cores">
+        <h1>{{ cor }}</h1>
+        <p>{{ i }}</p>
+    </template>
+    <hr>
+    <ul>
+        <!-- <li v-for="pessoa in pessoas">
+            {{ pessoa.nome }}
+        </li> -->
+        <li v-for="pessoa in pessoas">
+            <div v-for="(valor, chave, indice) in pessoa">
+                {{ chave }} = {{ valor }} ({{ indice }})
+            </div>
+        </li>
+    </ul>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            cores: ['Verde', 'Vermelho', 'Amarelo', 'Azul'],
+            pessoas: [
+                {
+                    nome: 'Ana',
+                    idade: 26,
+                    pese: 59
+                },
+                {
+                    nome: 'Guilherme',
+                    idade: 24,
+                    pese: 55
+                }
+            ]
+        }
+    })
+</script>

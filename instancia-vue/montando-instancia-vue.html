@@ -1,0 +1,39 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+</body>
+
+<script>
+    const vm = new Vue({
+        //el: "#app",
+        template: `
+            <div>
+                <h1>{{aula}}</h1>
+                <h2>{{modulo}}</h2>
+                <button @click="alterarAula">Alterar Aula</button>
+                <button @click="alterarModulo">Alterar Módulo</button>
+            </div>
+        `,
+        data: {
+            aula: "Aula: Montando Instância Vue",
+            modulo: "Módulo: Instância Vue"
+        },
+        methods: {
+            alterarAula(){
+                this.aula += "#";
+            },
+            alterarModulo(){
+                this.modulo += "#";
+            }
+        }
+    })
+
+    //vm.$mount('#app');
+    vm.$mount(); //exige que haja um el ou um template
+    document.querySelector('#app').appendChild(vm.$el);
+
+</script>

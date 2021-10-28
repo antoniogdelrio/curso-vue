@@ -1,0 +1,249 @@
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <title>Matador de Monstros</title>
+</head>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+       padding: 20px; 
+    }
+
+    #main, #controls, #logs {
+        display: flex;
+        border: 1px solid rgb(65, 65, 65);
+        padding: 8px;
+        margin-bottom: 20px;
+
+        border-radius: 5px;
+    }
+
+    #main {
+        justify-content: space-around;
+    }
+
+    .player-data {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .player-data {
+        width: 45%;
+    }
+
+    .player-data__lifebar {
+        width: 100%;
+        height: 20px;
+        border: 0.5px solid #000;
+    }
+
+    .player-data__lifebar-valid {
+        display: block;
+        height: 20px;
+        background-color: green;
+    }
+
+    .player-data__lifebar-valid.danger {
+        background-color: red;
+    }
+
+    #controls {
+        justify-content: space-around;
+    }
+
+    #controls button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        border: none;
+        background-color: transparent;
+
+        padding: 8px;
+        color: white;
+        border-radius: 5px;
+    }
+
+    #controls button:hover {
+        cursor: pointer;
+        transform: scale(1.05);
+
+    }
+
+    #controls button.controls__red {background-color: red;}
+    #controls button.controls__orange {background-color: orange;}
+    #controls button.controls__green {background-color: green;}
+    #controls button.controls__gray {background-color: gray;}
+    #controls button.controls__blue {background-color: blue;}
+
+    #logs {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .logs__item {
+        width: 80%;
+        padding: 8px;
+        text-align: center;
+    }
+
+    .logs__monster-log {
+        background-color: rgb(255, 123, 123);
+    }
+
+    .logs__player-log {
+        background-color: rgb(123, 255, 156);
+    }
+</style>
+
+<body>
+    <div id="app">
+        <main id="main">
+            <div class="player-data">
+                <h1 class="player-data__name">{{playerData.name}}</h1>
+                <div class="player-data__lifebar">
+                    <span class="player-data__lifebar-valid" :class="{ danger: playerData.lifebar < 20 }" :style="{ width: playerData.lifebar + '%' }"></span>
+                </div>
+                <p class="player-data__percentage">{{ playerData.lifebar }}%</p>
+            </div>
+
+            <div class="player-data">
+                <h1 class="player-data__name">{{monsterData.name}}</h1>
+                <div class="player-data__lifebar">
+                    <span class="player-data__lifebar-valid" :class="{ danger: monsterData.lifebar < 20 }" :style="{ width: monsterData.lifebar + '%' }"></span>
+                </div>
+                <p class="player-data__percentage">{{ monsterData.lifebar }}%</p>
+            </div>
+        </main>
+    
+        <section id="controls">
+            <template v-if="isPlayable && !finalMessage">
+                <button @click="simpleAttack" class="controls__red">Ataque</button>
+                <button @click="specialAttack" class="controls__orange">Ataque Especial</button>
+                <button @click="heal" class="controls__green">Curar</button>
+                <button @click="endgame" class="controls__gray">Desistir</button>
+            </template>
+
+            <template v-if="!isPlayable && !finalMessage">
+                <button class="controls__blue" @click="isPlayable = true">Iniciar novo jogo</button>
+            </template>
+
+            <template v-if="finalMessage">
+                <p>{{ finalMessage }}</p>
+            </template>
+        </section>
+
+        <section id="logs" v-show="logList.length != 0">
+            <div v-for="log in logList" class="logs__item" :class="{ 'logs__player-log': log.playerType == 'Jogador', 'logs__monster-log': log.playerType == 'Monstro' }">
+                {{ log.msg }}
+            </div>
+        </section>
+    </div>
+
+</body>
+
+<script>
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    new Vue({
+        el: "#app",
+        data: {
+            playerData: {
+                name: 'Jogador',
+                lifebar: 100
+            },
+            monsterData: {
+                name: 'Monstro',
+                lifebar: 100
+            },
+            logList: [],
+            isPlayable: false,
+            finalMessage: ''
+        },
+        watch: {
+            'playerData.lifebar': function(dataNew){
+                if(dataNew > 100)
+                    return;
+
+                if(dataNew <= 0){
+                    this.playerData.lifebar = 0;
+                    this.finishGame('monster');
+                }
+            },
+            'monsterData.lifebar': function(dataNew){
+                if(dataNew > 100)
+                    return;
+
+                if(dataNew <= 0){
+                    this.monsterData.lifebar = 0;
+                    this.finishGame('player');
+                }
+            }
+        },
+        methods: {
+            simpleAttack(){
+                let playerDamage = getRandomInt(6, 10);
+                this.playerData.lifebar -= playerDamage;
+                this.createLog(this.playerData, playerDamage);
+
+                let monsterDamage = getRandomInt(1, 5);
+                this.monsterData.lifebar -= monsterDamage;
+                this.createLog(this.monsterData, monsterDamage);
+            },
+            specialAttack(){
+                let monsterDamage = getRandomInt(6, 10);
+                this.monsterData.lifebar -= monsterDamage;
+                this.createLog(this.monsterData, monsterDamage);
+
+                let playerDamage = getRandomInt(1, 5);
+                this.playerData.lifebar -= playerDamage;
+                this.createLog(this.playerData, playerDamage);
+            },
+            heal(){
+                let playerHeal = getRandomInt(6, 10);
+
+                if(this.playerData.lifebar + playerHeal < 100)
+                    this.playerData.lifebar += playerHeal;
+
+                let playerDamage = getRandomInt(6, 10);
+                this.playerData.lifebar -= playerDamage;
+
+                this.createLog(this.playerData, playerHeal, true);
+                this.createLog(this.playerData, playerDamage, true);
+            },
+            endgame(){
+                this.logList = [];
+
+                this.playerData.lifebar = 100;
+                this.monsterData.lifebar = 100;
+
+                this.isPlayable = false;
+            },
+            createLog(player, damage, isHeal){
+                if(!isHeal)
+                    return this.logList.push({playerType: player.name, msg: `${player.name} perdeu ${damage} de vida`});
+
+                return this.logList.push({playerType: player.name, msg: `Jogador ganhou força de ${damage}`});
+            },
+            finishGame(winner){
+                if(winner == 'monster')
+                    return this.finalMessage = 'Você perdeu :('
+                
+                if(winner == 'player')
+                    return this.finalMessage = 'Você venceu :D'
+            }
+        }
+    })
+</script>
